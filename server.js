@@ -1,36 +1,26 @@
 import express from 'express';
 import dotenv from 'dotenv';
-
-
-
-
-// configure dotenv
-dotenv.config();
-const PORT = process.env.PORT || 5009;
-
-
-
+import catRoutes from './routes/cat.js'
+dotenv.config()
+// Port
+const PORT = process.env.PORT || 5003;
 // initialize express
 const app = express();
 
-// parse body 
+// parse body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// use routes
-
-
-// error
-app.use((err, req, res, next) => {
+// Routes
+app.use('/api',catRoutes);
+// Handle 404
+app.use((err, req) => {
+    res.status(404).send('Page not found!');
+});
+// Handle error
+app.use((err, req, res) => {
     console.error(err);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).send('server is down');
 });
-
-// handle 404
-app.use('*', (req, res) => {
-    res.status(404).json({ message: 'Page is not found' });
-});
-
 // listen
 app.listen(PORT, () => {
     console.log(`Server is up and running on port : ${PORT}`);
